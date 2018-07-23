@@ -1,13 +1,17 @@
 from app import db
 
-class User(db.Model):
+class Point(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(255))
-    email = db.Column(db.String(255), unique=True)
+    title = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+    lat = db.Column(db.Float)
+    lon = db.Column(db.Float)
 
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
+    def __init__(self, title, description, lat, lon):
+        self.title = title
+        self.description = description
+        self.lat = lat
+        self.lon = lon
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '<User %r>' % self.title

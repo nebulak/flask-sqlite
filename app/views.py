@@ -6,9 +6,35 @@ This file creates your application.
 """
 
 from app import app, db
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, Response
 from forms import UserForm
-from models import User
+from models import Point
+from functools import wraps
+
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'admin' and password == 'secret'
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+
 # import sqlite3
 
 ###
@@ -28,11 +54,12 @@ def about():
 
 @app.route('/users')
 def show_users():
-    users = db.session.query(User).all() # or you could have used User.query.all()
+    points = db.session.query(Point).all() # or you could have used User.query.all()
 
-    return render_template('show_users.html', users=users)
+    return render_template('show_users.html', points=points)
 
 @app.route('/add-user', methods=['POST', 'GET'])
+@requires_auth
 def add_user():
     user_form = UserForm()
 

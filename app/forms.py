@@ -3,5 +3,7 @@ from wtforms import StringField
 from wtforms.validators import InputRequired
 
 class UserForm(FlaskForm):
-    name = StringField('Name', validators=[InputRequired()])
-    email = StringField('Email', validators=[InputRequired()])
+    title = StringField('Title', validators=[InputRequired()])
+    description = StringField('Description', validators=[InputRequired()])
+    lat = StringField('Lat', validators=[InputRequired()])
+    lon = StringField('Lon', validators=[InputRequired()])
